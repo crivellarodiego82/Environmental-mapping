@@ -1,0 +1,53 @@
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+
+# Dimensioni della stanza
+width = 8
+length = 8
+
+# Generazione di dati finti per la forma della stanza
+room_data = np.zeros((length, width))
+
+# Generazione di dati finti per gli oggetti nella stanza
+object_positions = [(2, 2), (5, 5)]
+
+def generate_fake_data():
+    data = np.zeros((length, width))
+    for x in range(length):
+        for y in range(width):
+            data[x][y] = 50 * np.sin(0.1 * x) + 50 * np.cos(0.1 * y) + np.random.normal(0, 5)
+    return data
+
+# Visualizzazione della simulazione 3D con la forma della stanza e gli oggetti
+def plot_3d_simulation(data, room_data, object_positions):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    x_data, y_data = np.meshgrid(range(length), range(width))
+
+    # Plot della forma della stanza
+    ax.plot_wireframe(x_data, y_data, room_data, color='gray', alpha=0.5)
+
+    # Plot degli oggetti nella stanza
+    for position in object_positions:
+        ax.scatter(position[0], position[1], data[position[0]][position[1]], c='red', marker='o', s=100)
+
+    # Plot della superficie della simulazione 3D
+    ax.plot_surface(x_data, y_data, data, cmap='viridis')
+
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Distance (cm)')
+    ax.set_title('Simulazione 3D della Stanza con Oggetti')
+
+    # Scegli se mostrare direttamente la figura o salvarla su file
+    if plt.get_backend().lower() == 'agg':
+        print("Il backend è 'agg', quindi salvo la figura su file.")
+        plt.savefig('3d_simulation_with_objects.png')
+    else:
+        plt.show()
+
+# Generazione dei dati finti e visualizzazione della simulazione 3D con oggetti
+fake_data = generate_fake_data()
+plot_3d_simulation(fake_data, room_data, object_positions)
