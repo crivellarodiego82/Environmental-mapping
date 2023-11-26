@@ -1,0 +1,36 @@
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+
+# Dimensioni della stanza
+width = 8
+length = 8
+
+# Generazione di dati finti
+def generate_fake_data():
+    data = np.zeros((length, width))
+    for x in range(length):
+        for y in range(width):
+            # Modifica questa funzione per generare dati finti
+            data[x][y] = 50 * np.sin(0.1 * x) + 50 * np.cos(0.1 * y) + np.random.normal(0, 5)
+    return data
+
+# Visualizzazione della simulazione 3D
+def plot_3d_simulation(data):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    x_data, y_data = np.meshgrid(range(length), range(width))
+
+    ax.plot_surface(x_data, y_data, data, cmap='viridis')
+
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Distance (cm)')
+    ax.set_title('Simulazione 3D della Stanza')
+
+    plt.show()
+
+# Generazione dei dati finti e visualizzazione della simulazione 3D
+fake_data = generate_fake_data()
+plot_3d_simulation(fake_data)
