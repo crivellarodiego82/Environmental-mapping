@@ -1,0 +1,63 @@
+import machine
+import utime
+import math
+from machine import Pin
+from machine import PWM
+from hcsr04 import HCSR04
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+
+# Inizializzazione del sensore ultrasuoni
+trig_pin = 14  # Pin di trigger
+echo_pin = 12  # Pin di echo
+sensor = HCSR04(trig_pin, echo_pin)
+
+# Inizializzazione del motore DC
+motor_pin = 13  # Pin del motore DC
+motor_pwm = PWM(Pin(motor_pin), freq=50, duty=0)
+
+# Dimensioni della stanza
+width = 8
+length = 8
+
+# Inizializzazione della matrice dei dati
+data_matrix = [[0 for _ in range(width)] for _ in range(length)]
+
+# Funzione per ruotare il sensore di 360 gradi
+def rotate_sensor():
+    for i in range(360):
+        angle = math.radians(i)
+        motor_pwm.duty(int(math.sin(angle) * 1023))
+        utime.sleep(0.01)
+        distance = sensor.distance_cm()
+        x = int(length / 2 + (length / 2) * math.cos(angle))
+        y = int(width / 2 + (width / 2) * math.sin(angle))
+        data_matrix[x][y] = distance
+
+# Funzione per generare la mappa 3D
+def generate_3d_map():
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    x_data = []
+    y_data = []
+    z_data = []
+
+    for x in range(length):
+        for y in range(width):
+            x_data.append(x)
+            y_data.append(y)
+            z_data.append(data_matrix[x][y])
+
+    ax.scatter(x_data, y_data, z_data, c='r', marker='o')
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Distance (cm)')
+
+    plt.show()
+
+# Esecuzione della scansione
+rotate_sensor()
+
+# Generazione della mappa 3D
+generate_3d_map()
